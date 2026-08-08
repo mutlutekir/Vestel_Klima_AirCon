@@ -86,21 +86,6 @@ genişletir.
 3. Otomatik giriş çalışmazsa (Vestel sayfa yapısını değiştirirse), aynı
    menüden **"Refresh token yapıştır (yedek yöntem)"**ni kullanabilirsin.
 
-### 🖼️ Cihaz görseli
-
-Vestel'in logosunu telif nedeniyle kullanamıyorum; bunun yerine paket
-içinde jenerik bir klima çizimi + "VESTEL KLIMA AirCon" yazılı bir görsel
-var (`custom_components/vestel_ac/assets/vestel_ac.png`).
-
-**Elle bir şey yapmana gerek yok** — entegrasyon, ilk kurulumda bu dosyayı
-otomatik olarak HA config dizinindeki `www/vestel_ac/vestel_ac.png`
-konumuna kopyalar (yoksa `www/vestel_ac/` klasörünü kendisi oluşturur).
-Bu adım, custom_component'lerin kurulumdan sonra zaten gerektirdiği tek
-"Home Assistant'ı yeniden başlat" adımıyla aynı anda gerçekleşir.
-
-Kendi görselini/fotoğrafını koymak istersen: `www/vestel_ac/vestel_ac.png`
-dosyasının üzerine kendi dosyanı aynı isimle yaz — entegrasyon, dosya zaten
-varsa üzerine yazmaz, senin koyduğun kalır.
 
 ---
 
