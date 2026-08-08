@@ -1,4 +1,5 @@
 Vestel AC — Home Assistant Entegrasyonu (Unofficial)
+
 ![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)
 ![Version](https://img.shields.io/badge/version-0.4.1-blue?style=for-the-badge)
 ![Maintainer](https://img.shields.io/badge/maintainer-Mutlu%20Tekir-green?style=for-the-badge)
