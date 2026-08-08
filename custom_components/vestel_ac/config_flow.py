@@ -1,4 +1,4 @@
-"""Config flow for the Vestel AC (unofficial) integration.
+"""Config flow for the Vestel Klima AirCon integration.
 
 Everything needed lives inside the integration - nothing to install or run
 outside Home Assistant, so this can be set up entirely from a phone.
