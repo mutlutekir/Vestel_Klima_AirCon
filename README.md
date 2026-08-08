@@ -1,788 +1,617 @@
-<h1 align="center">
-  🌬️ Vestel AC
-</h1>
-
-<h3 align="center">
-  Home Assistant için gelişmiş Vestel Klima entegrasyonu
-</h3>
+# 🌬️ Vestel AC — Home Assistant Integration
 
 <p align="center">
-  Vestel Doğa / Flora serisi Wi-Fi'li klimaları doğrudan Home Assistant üzerinden kontrol edin.
+  <a href="#english">🇬🇧 English</a>
+  &nbsp; | &nbsp;
+  <a href="#türkçe">🇹🇷 Türkçe</a>
 </p>
 
 <p align="center">
   <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Klima_AirCon&category=integration">
-    <img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="HACS ile yükle">
+    <img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Install with HACS">
   </a>
-  &nbsp;&nbsp;
+  &nbsp;
   <a href="https://my.home-assistant.io/redirect/config_flow_start/?domain=vestel_ac">
-    <img src="https://my.home-assistant.io/badges/config_flow_start.svg" alt="Home Assistant'a ekle">
-  </a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/mutlutekir/Vestel_Klima_AirCon/releases">
-    <img src="https://img.shields.io/github/v/release/mutlutekir/Vestel_Klima_AirCon?style=for-the-badge" alt="Latest Release">
-  </a>
-  <a href="https://github.com/mutlutekir/Vestel_Klima_AirCon/stargazers">
-    <img src="https://img.shields.io/github/stars/mutlutekir/Vestel_Klima_AirCon?style=for-the-badge" alt="GitHub Stars">
-  </a>
-  <a href="https://github.com/hacs/integration">
-    <img src="https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge" alt="HACS">
+    <img src="https://my.home-assistant.io/badges/config_flow_start.svg" alt="Add to Home Assistant">
   </a>
 </p>
 
 ---
 
-# 🌬️ Vestel AC — Home Assistant Entegrasyonu
+<a id="english"></a>
 
-Vestel Doğa / Flora serisi Wi-Fi'li klimaları, resmi **Vestel Akıllı Yaşam** uygulamasına ihtiyaç duymadan doğrudan Home Assistant üzerinden kontrol etmenizi sağlayan özel (**custom**) entegrasyondur.
+# 🇬🇧 English
 
-Mod, fan hızı, sıcaklık, dikey/yatay kanatçık, salınım, turbo, uyku, iyonizer, tasarruf modu, otomatik kapatma zamanlayıcısı ve tanı bilgileri tek bir Home Assistant entegrasyonu altında toplanır.
+Vestel AC is an unofficial Home Assistant custom integration for Wi-Fi enabled Vestel Doğa / Flora series air conditioners.
 
-> ⚠️ **Bu resmi bir Vestel entegrasyonu değildir.**
->
-> Vestel ile herhangi bir bağlantısı veya resmi desteği yoktur.
-> Vestel API'yi değiştirirse veya erişimi kapatırsa entegrasyon çalışmayı durdurabilir.
+It communicates directly with the Vestel Smart Life cloud API and provides advanced controls that are not normally exposed by Home Assistant.
 
----
+> ⚠️ This is an unofficial community project and is not affiliated with Vestel.
 
-# ✨ Özellikler
+## ✨ Features
 
-| Özellik | Durum |
-|---|:---:|
-| 🌡️ Sıcaklık kontrolü | ✅ |
-| ❄️ Soğutma | ✅ |
-| ☀️ Isıtma | ✅ |
-| 💧 Nem alma | ✅ |
-| 🌀 Sadece fan | ✅ |
-| 🤖 Otomatik mod | ✅ |
-| 🌀 Fan Auto + 1-5 | ✅ |
-| 🎯 Dikey kanatçık | ✅ |
-| ↔️ Yatay kanatçık | ⚠️ Modele bağlı |
-| 🔄 Dikey salınım | ✅ |
-| ⚡ Turbo | ✅ |
-| 🌙 Uyku | ✅ |
-| 🍃 Tasarruf / Eco | ✅ |
-| ✨ İyonizer | ✅ |
-| ⏰ Otomatik kapatma | ✅ |
-| 🩺 Hata / uyarı bilgileri | ✅ |
-| 🌫️ VOC / hava kalitesi | ⚠️ Donanıma bağlı |
-| 🫧 PM / partikül bilgisi | ⚠️ Donanıma bağlı |
-| 🧹 Filtre ömrü | ⚠️ Donanıma bağlı |
-| 🧪 Ham API komutları | ✅ |
+- 🌡️ Cooling, heating, dry, fan-only and auto modes
+- 🎯 Target temperature control
+- 🌀 Auto + 1-5 fan speeds
+- ↕️ Vertical louver position control
+- 🔄 Vertical swing / stop swing
+- ↔️ Horizontal louver support where available
+- ⚡ Turbo mode
+- 🌙 Sleep mode
+- 🍃 Eco / Energy Saving mode
+- ✨ Ionizer
+- ⏰ Automatic shutdown timer
+- 🩺 Diagnostic information
+- 🌫️ VOC / particle air-quality information on supported models
+- 🧹 Filter / particle-sensor lifetime information where available
+- 🧪 Raw API status and command services
+- 🔐 Automatic authentication with Vestel account credentials
 
 ---
 
-# 🛠️ Desteklenen Klima Kontrolleri
+## 🚀 Installation
 
-## 🌡️ İklimlendirme
+### HACS — Recommended
 
-- Auto
-- Soğutma
-- Isıtma
-- Nem Alma
-- Sadece Fan
-- Kapalı
-- 18-30 °C hedef sıcaklık
-- Fan Auto
-- Fan 1-5
+<a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Klima_AirCon&category=integration">
+  <img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Install with HACS">
+</a>
 
-## 🎯 Kanatçık Kontrolü
+Or manually:
 
-- Dikey kanatçık 1-5
-- Dikey serbest salınım
-- Dikey salınımı durdur
-- Yatay kanatçık desteği
-- Yatay salınım desteği modele bağlıdır
-
-## ⚡ Özel Modlar
-
-- Turbo
-- Uyku
-- İyonizer
-- Tasarruf / Eco
-
-## ⏰ Zamanlayıcı
-
-- Otomatik kapatma
-- Saat/dakika tabanlı kapanma
-
----
-
-# 🚀 Kurulum
-
-## 🛒 Yöntem 1 — HACS
-
-**Önerilen kurulum yöntemidir.**
-
-<p align="center">
-  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Klima_AirCon&category=integration">
-    <img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Vestel AC'yi HACS ile yükle">
-  </a>
-</p>
-
-### HACS ile kurulum
-
-1. Home Assistant'ta **HACS**'ı açın.
-2. **Integrations** bölümüne girin.
-3. Sağ üstteki **⋮** menüsüne tıklayın.
-4. **Custom repositories** seçeneğini açın.
-5. Aşağıdaki repository adresini girin:
+1. Open HACS → Integrations.
+2. Open ⋮ → Custom repositories.
+3. Add:
 
     https://github.com/mutlutekir/Vestel_Klima_AirCon
 
-6. Kategori olarak **Integration** seçin.
-7. **Add** butonuna basın.
-8. **Vestel AC** entegrasyonunu bulun.
-9. **Download** seçeneğine basın.
-10. Home Assistant'ı yeniden başlatın.
+4. Select **Integration**.
+5. Install **Vestel AC**.
+6. Restart Home Assistant.
+
+### Manual
+
+Download the latest release and copy:
+
+    custom_components/vestel_ac
+
+to:
+
+    /config/custom_components/
+
+Then restart Home Assistant.
 
 ---
 
-# 📦 Yöntem 2 — Manuel Kurulum
+## ⚙️ Configuration
 
-Repository'nin en son sürümünü indirin:
+Go to:
 
-https://github.com/mutlutekir/Vestel_Klima_AirCon/releases
+    Settings → Devices & Services → Add Integration
 
-Aşağıdaki klasör yapısının Home Assistant içerisinde bulunması gerekir:
+Search for:
 
-    /config/
-    └── custom_components/
-        └── vestel_ac/
-            ├── __init__.py
-            ├── climate.py
-            ├── sensor.py
-            ├── select.py
-            ├── switch.py
-            ├── button.py
-            ├── time.py
-            ├── config_flow.py
-            ├── manifest.json
-            └── ...
+    Vestel AC
+
+The integration supports:
+
+- Username / password login
+- Refresh-token authentication as a fallback
+
+After authentication, available Vestel air conditioners are automatically discovered.
+
+---
+
+## 🎛️ Supported Controls
+
+| Feature | Support |
+|---|:---:|
+| Auto | ✅ |
+| Cooling | ✅ |
+| Heating | ✅ |
+| Dry | ✅ |
+| Fan Only | ✅ |
+| Off | ✅ |
+| Target Temperature | ✅ |
+| Fan Auto / 1-5 | ✅ |
+| Vertical Louver | ✅ |
+| Vertical Swing | ✅ |
+| Horizontal Louver | ⚠️ Model dependent |
+| Turbo | ✅ |
+| Sleep | ✅ |
+| Eco | ✅ |
+| Ionizer | ✅ |
+| Auto Off Timer | ✅ |
+| Diagnostics | ✅ |
+| VOC / PM | ⚠️ Model dependent |
+| Filter Lifetime | ⚠️ Model dependent |
+
+---
+
+## 🔬 Reverse-Engineered Parameters
+
+The following values were identified from the Vestel Smart Life APK and verified against a real air conditioner.
+
+### ACCMODE
+
+| Value | Mode |
+|---:|---|
+| `0` | Auto |
+| `1` | Cooling |
+| `2` | Dry |
+| `3` | Fan Only |
+| `4` | Heating |
+| `5` | Off |
+
+### ACGENSI
+
+The mode and fan speed are combined using:
+
+    ACGENSI = ACCMODE + FanSpeed × 8
+
+### ACFANPO
+
+`ACFANPO` contains several settings as bit fields:
+
+| Bits | Function |
+|---|---|
+| 0 | Turbo |
+| 1-3 | Vertical louver |
+| 4-6 | Horizontal louver |
+| 7 | Sleep |
+| 8 | Ionizer |
+| 9 | Eco |
+
+Vertical louver values:
+
+| Value | Position |
+|---:|---|
+| `0` | Stop |
+| `1` | Position 1 |
+| `2` | Position 2 |
+| `3` | Position 3 |
+| `4` | Position 4 |
+| `5` | Position 5 |
+| `6` | Swing |
+
+### Verified Vertical Louver Values
+
+| Function | ACFANPO |
+|---|---:|
+| Top position | `00050` |
+| Position 2 | `00052` |
+| Position 3 | `00054` |
+| Position 4 | `00056` |
+| Bottom position | `00058` |
+| Swing | `00060` |
+| Stop / fixed position | `00048` |
+
+### Verified Special Modes
+
+| Function | Value |
+|---|---:|
+| Normal | `00050` |
+| Sleep | `00178` |
+| Ionizer | `00306` |
+| Eco | `00562` |
+
+Turbo is reflected in the `ACGENSI` state and was observed as:
+
+    ACGENSI = 00025
+
+---
+
+## ⏰ Automatic Shutdown
+
+`ACOFFTV` stores the automatic shutdown time:
+
+    ACOFFTV = (minutes << 5) | hours
+
+The value:
+
+    2047
+
+means the timer is disabled.
+
+Example:
+
+    14:18 → 00590
+
+---
+
+## 🩺 Diagnostic Data
+
+The APK exposes additional diagnostic fields. Availability depends on the air-conditioner model and firmware.
+
+| Field | Description |
+|---|---|
+| `ACERROR` | Error information |
+| `ACERRTW` | UVC / particle sensor errors |
+| `ACWARNG` | Warning information |
+| `ACPOLVC` | VOC air quality |
+| `ACPOLPM` | Particle / PM air quality |
+| `ACOAFLP` | Odor & allergen filter lifetime |
+| `ACPSCLP` | Particle sensor lifetime |
+| `ACSAFRS` | Filter / sensor reset |
+| `ACVERSI` | Firmware information |
+
+Some fields may not be returned by the device. Missing capabilities are therefore not considered an error.
+
+---
+
+## 🧪 Raw API Services
+
+For advanced testing and feature discovery, the integration provides raw API services.
+
+### Dump current device status
+
+    vestel_ac.dump_raw_status
+
+### Send a raw command
+
+    vestel_ac.send_raw_code
+
+Example:
+
+    action: vestel_ac.send_raw_code
+    data:
+      code: "ACFANPO00562"
+
+These services are mainly intended for development and reverse engineering.
+
+> ⚠️ Do not send unknown values to the device. Incorrect commands may change its operating state.
+
+---
+
+## 🔍 Feature Discovery
+
+New features can be investigated by comparing the raw status before and after changing a setting in the official Vestel application.
+
+Recommended workflow:
+
+    dump_raw_status
+          ↓
+    Change one setting
+          ↓
+    dump_raw_status
+          ↓
+    Compare changed fields
+          ↓
+    Test the discovered value
+          ↓
+    Add the feature to Home Assistant
+
+---
+
+## ❤️ Credits
+
+**Home Assistant integration:**  
+Mutlu Tekir
+
+**Original Vestel API research:**  
+Sezer İltekin
+
+**Original project:**  
+https://github.com/iltekin/vestel-ac-remote-control
+
+The original API research provided the foundation for communicating with the Vestel cloud service. This integration extends that work with Home Assistant support and additional features discovered through APK analysis and real-device testing.
+
+---
+
+## ⚠️ Disclaimer
+
+This project is unofficial and is not affiliated with Vestel.
+
+The integration relies on the Vestel cloud API. API changes, authentication changes or service shutdowns by Vestel may cause the integration to stop working.
+
+Some features are model and firmware dependent.
+
+If you encounter a problem, please open an issue:
+
+https://github.com/mutlutekir/Vestel_Klima_AirCon/issues
+
+Do not include passwords, access tokens or refresh tokens in issue reports.
+
+---
+
+<a id="türkçe"></a>
+
+# 🇹🇷 Türkçe
+
+Vestel AC, Wi-Fi destekli Vestel Doğa / Flora serisi klimaları Home Assistant üzerinden kontrol etmek için geliştirilmiş resmi olmayan bir özel entegrasyondur.
+
+Vestel Akıllı Yaşam bulut API'si ile doğrudan iletişim kurar ve Home Assistant'ta normalde bulunmayan gelişmiş klima kontrollerini sunar.
+
+> ⚠️ Bu proje resmi değildir ve Vestel ile herhangi bir bağlantısı yoktur.
+
+## ✨ Özellikler
+
+- 🌡️ Soğutma, ısıtma, nem alma, fan ve otomatik mod
+- 🎯 Hedef sıcaklık kontrolü
+- 🌀 Auto + 1-5 fan hızı
+- ↕️ Dikey kanatçık pozisyonu
+- 🔄 Dikey salınım / salınımı durdurma
+- ↔️ Desteklenen modellerde yatay kanatçık
+- ⚡ Turbo
+- 🌙 Uyku
+- 🍃 Tasarruf / Eco
+- ✨ İyonizer
+- ⏰ Otomatik kapatma zamanlayıcısı
+- 🩺 Tanı / hata bilgileri
+- 🌫️ Desteklenen modellerde VOC / partikül hava kalitesi
+- 🧹 Desteklenen modellerde filtre / partikül sensörü ömrü
+- 🧪 Ham API durum ve komut servisleri
+- 🔐 Vestel hesabıyla otomatik kimlik doğrulama
+
+---
+
+## 🚀 Kurulum
+
+### HACS — Önerilen
+
+<a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Klima_AirCon&category=integration">
+  <img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="HACS ile yükle">
+</a>
+
+Alternatif olarak:
+
+1. Home Assistant'ta HACS → Integrations bölümünü açın.
+2. Sağ üstten ⋮ → Custom repositories seçin.
+3. Aşağıdaki adresi ekleyin:
+
+    https://github.com/mutlutekir/Vestel_Klima_AirCon
+
+4. Kategori olarak **Integration** seçin.
+5. **Vestel AC** entegrasyonunu yükleyin.
+6. Home Assistant'ı yeniden başlatın.
+
+### Manuel
+
+Son sürümü indirin ve:
+
+    custom_components/vestel_ac
+
+klasörünü:
+
+    /config/custom_components/
+
+içine kopyalayın.
 
 Ardından Home Assistant'ı yeniden başlatın.
 
 ---
 
-# ⚙️ Entegrasyonu Ekleme
+## ⚙️ Yapılandırma
 
-<p align="center">
-  <a href="https://my.home-assistant.io/redirect/config_flow_start/?domain=vestel_ac">
-    <img src="https://my.home-assistant.io/badges/config_flow_start.svg" alt="Vestel AC'yi Home Assistant'a ekle">
-  </a>
-</p>
+Şuraya gidin:
 
-Manuel olarak eklemek için:
+    Ayarlar → Cihazlar ve Hizmetler → Entegrasyon Ekle
 
-    Ayarlar
-       ↓
-    Cihazlar ve Hizmetler
-       ↓
-    + Entegrasyon Ekle
-       ↓
+Aratın:
+
     Vestel AC
 
----
+Kimlik doğrulama için:
 
-# 🔐 Kimlik Doğrulama
+- Kullanıcı adı / şifre
+- Yedek olarak Refresh Token
 
-Vestel AC entegrasyonu iki farklı giriş yöntemi destekler.
+kullanılabilir.
 
-| Yöntem | Açıklama | Öneri |
-|---|---|:---:|
-| 👤 Kullanıcı adı / Şifre | Vestel Akıllı Yaşam hesabıyla otomatik giriş | ⭐⭐⭐ |
-| 🔑 Refresh Token | Yedek kimlik doğrulama yöntemi | ⭐ |
-
-## 👤 Kullanıcı adı / Şifre
-
-Kurulum ekranında:
-
-    Kullanıcı adı / şifre (otomatik)
-
-seçeneğini seçin.
-
-Vestel Akıllı Yaşam hesabınızın:
-
-    E-posta
-    Şifre
-
-bilgilerini girin.
-
-Entegrasyon arka planda gerekli kimlik doğrulama işlemlerini yaparak klima cihazlarını keşfeder.
+Kimlik doğrulama tamamlandıktan sonra kullanılabilir Vestel klimalar otomatik olarak keşfedilir.
 
 ---
 
-# 🔑 Refresh Token — Yedek Yöntem
+## 🎛️ Desteklenen Kontroller
 
-Otomatik giriş Vestel tarafındaki giriş ekranı değişiklikleri nedeniyle çalışmazsa refresh token yöntemi kullanılabilir.
-
-Kurulum ekranından:
-
-    Refresh token yapıştır
-
-seçeneğini kullanabilirsiniz.
-
-> 💡 Bu yöntem özellikle Vestel'in Cognito Hosted UI veya giriş akışında değişiklik yapması durumunda yedek olarak bulunmaktadır.
-
----
-
-# 🧭 Kurulum Akışı
-
-    🏠 Home Assistant
-             │
-             ▼
-       ┌───────────────┐
-       │  Kurulum      │
-       └───────┬───────┘
-               │
-       ┌───────┴────────┐
-       ▼                ▼
-     🛒 HACS          📦 Manuel
-       │                │
-       └───────┬────────┘
-               ▼
-        🔄 Home Assistant
-           Restart
-               │
-               ▼
-        ⚙️ Vestel AC
-        Entegrasyonunu Ekle
-               │
-        ┌──────┴──────┐
-        ▼             ▼
-    👤 E-posta      🔑 Refresh
-       + Şifre        Token
-        │             │
-        └──────┬──────┘
-               ▼
-       ☁️ Vestel Cloud API
-               │
-               ▼
-          🔎 Cihaz Keşfi
-               │
-               ▼
-          🌬️ Vestel AC
+| Özellik | Destek |
+|---|:---:|
+| Otomatik | ✅ |
+| Soğutma | ✅ |
+| Isıtma | ✅ |
+| Nem Alma | ✅ |
+| Sadece Fan | ✅ |
+| Kapalı | ✅ |
+| Hedef Sıcaklık | ✅ |
+| Fan Auto / 1-5 | ✅ |
+| Dikey Kanatçık | ✅ |
+| Dikey Salınım | ✅ |
+| Yatay Kanatçık | ⚠️ Modele bağlı |
+| Turbo | ✅ |
+| Uyku | ✅ |
+| Tasarruf | ✅ |
+| İyonizer | ✅ |
+| Otomatik Kapatma | ✅ |
+| Tanı Bilgileri | ✅ |
+| VOC / PM | ⚠️ Modele bağlı |
+| Filtre Ömrü | ⚠️ Modele bağlı |
 
 ---
 
-# 🏠 Home Assistant Entity'leri
+## 🔬 Çözümlenen Parametreler
 
-Kurulum tamamlandıktan sonra klima Home Assistant içerisinde bir `climate` entity olarak görünür.
+Bu değerler Vestel Akıllı Yaşam APK'sından araştırılmış ve gerçek bir klima üzerinde doğrulanmıştır.
 
-Örneğin:
-
-    climate.klima
-
-Ek özellikler için aşağıdaki entity'ler kullanılabilir:
-
-    select.salon_klima_dikey_kanatcik
-
-    button.salon_klima_dikey_kanatcik_salinimi_durdur
-    button.salon_klima_dikey_kanatcik_serbest_salinim
-
-    switch.salon_klima_iyonizer
-    switch.salon_klima_tasarruf_modu
-    switch.salon_klima_turbo
-    switch.salon_klima_uyku_modu
-
-Entity isimleri Home Assistant tarafından cihaz adına göre değişebilir.
-
----
-
-# 🎯 Dikey Kanatçık
-
-Gerçek cihaz üzerinde yapılan testlerde dikey kanatçık için aşağıdaki değerler doğrulanmıştır:
-
-| Pozisyon | ACFANPO |
-|---|---:|
-| ⬆️ En üst | `00050` |
-| ↗️ Üstten 2. kademe | `00052` |
-| ↗️ Üstten 3. kademe | `00054` |
-| ↘️ Üstten 4. kademe | `00056` |
-| ⬇️ En alt | `00058` |
-| 🔄 Serbest salınım | `00060` |
-| ⏹️ Salınımı durdur / sabitle | `00048` |
-
-Bu değerler gerçek cihazdan alınan durum değişiklikleriyle doğrulanmıştır.
-
----
-
-# 🌀 ACCMODE — Klima Modu
-
-`ACCMODE` klimanın çalışma modunu belirtir.
+### ACCMODE
 
 | Değer | Mod |
 |---:|---|
-| `0` | Auto |
+| `0` | Otomatik |
 | `1` | Soğutma |
 | `2` | Nem Alma |
 | `3` | Sadece Fan |
 | `4` | Isıtma |
 | `5` | Kapalı |
 
----
+### ACGENSI
 
-# 🌀 ACGENSI — Mod + Fan Hızı
-
-Gerçek cihaz üzerinden doğrulanan yapı:
+Mod ve fan hızı birlikte kodlanır:
 
     ACGENSI = ACCMODE + FanSpeed × 8
 
-Örneğin:
+### ACFANPO
 
-    ACCMODE = 1
-    FanSpeed = 1
-
-    ACGENSI = 1 + (1 × 8)
-            = 9
-
-Fan hızları cihaz tarafından bu alan üzerinden kodlanabilir.
-
----
-
-# 🎯 ACFANPO — Kanatçık ve Özel Modlar
-
-`ACFANPO`, birden fazla özelliği tek bir sayısal değer içerisinde bit alanları kullanarak taşır.
-
-| Bit | Özellik | Değer |
-|---:|---|---|
-| 0 | Turbo | +1 |
-| 1-3 | Dikey kanatçık | 0-6 |
-| 4-6 | Yatay kanatçık | 0-6 |
-| 7 | Uyku | +128 |
-| 8 | İyonizer | +256 |
-| 9 | Tasarruf | +512 |
+| Bitler | Özellik |
+|---|---|
+| 0 | Turbo |
+| 1-3 | Dikey kanatçık |
+| 4-6 | Yatay kanatçık |
+| 7 | Uyku |
+| 8 | İyonizer |
+| 9 | Tasarruf |
 
 Dikey kanatçık:
 
-    0 = Durdur
-    1 = Kademe 1
-    2 = Kademe 2
-    3 = Kademe 3
-    4 = Kademe 4
-    5 = Kademe 5
-    6 = Salınım
+| Değer | Pozisyon |
+|---:|---|
+| `0` | Durdur |
+| `1` | 1. kademe |
+| `2` | 2. kademe |
+| `3` | 3. kademe |
+| `4` | 4. kademe |
+| `5` | 5. kademe |
+| `6` | Salınım |
+
+### Doğrulanmış Dikey Kanatçık Değerleri
+
+| İşlev | ACFANPO |
+|---|---:|
+| En üst | `00050` |
+| 2. kademe | `00052` |
+| 3. kademe | `00054` |
+| 4. kademe | `00056` |
+| En alt | `00058` |
+| Salınım | `00060` |
+| Salınımı durdur | `00048` |
+
+### Doğrulanmış Özel Modlar
+
+| İşlev | Değer |
+|---|---:|
+| Normal | `00050` |
+| Uyku | `00178` |
+| İyonizer | `00306` |
+| Tasarruf | `00562` |
+
+Turbo için gerçek cihazda:
+
+    ACGENSI = 00025
+
+değeri gözlemlenmiştir.
 
 ---
 
-# ⚡ Gerçek Cihazda Doğrulanan Özel Modlar
+## ⏰ Otomatik Kapatma
 
-| Özellik | Alan | Değer |
-|---|---|---:|
-| Normal | ACFANPO | `00050` |
-| Turbo | ACGENSI | `00025` |
-| Uyku | ACFANPO | `00178` |
-| İyonizer | ACFANPO | `00306` |
-| Tasarruf | ACFANPO | `00562` |
-| Dikey Swing | ACFANPO | `00060` |
-
----
-
-# 🌙 Özel Modların Bit Karşılıkları
-
-`ACFANPO` içerisinde:
-
-    Turbo     = +1
-    Uyku      = +128
-    İyonizer  = +256
-    Tasarruf  = +512
-
-Örneğin:
-
-    Normal:
-    00050
-
-    Tasarruf:
-    00050 + 512
-    = 00562
-
-İyonizer:
-
-    00050 + 256
-    = 00306
-
-Uyku:
-
-    00050 + 128
-    = 00178
-
-Bu değerler gerçek cihaz üzerinden gözlemlenmiştir.
-
----
-
-# 🌀 Fan Modu
-
-Bazı Vestel modellerinde Home Assistant'ın standart `climate` entity'sinde fan-only modu görünmeyebilir.
-
-Bu entegrasyonda Vestel API'sinin gerçek cihaz davranışı kullanılarak:
-
-    ACCMODE = 3
-
-değeri **Sadece Fan** modu olarak desteklenmektedir.
-
-Gerçek cihazdan örnek:
-
-    ACCMODE = 00003
-    ACGENSI = 00011
-
----
-
-# ⏰ ACOFFTV — Otomatik Kapatma
-
-Otomatik kapanma zamanı:
+`ACOFFTV` otomatik kapanma saatini tutar:
 
     ACOFFTV = (dakika << 5) | saat
 
-Devre dışı değeri:
-
-    2047
+    2047 = zamanlayıcı kapalı
 
 Örneğin:
 
-    14:18
-
-için:
-
-    ACOFFTV = 00590
-
-değeri gözlemlenmiştir.
+    14:18 → 00590
 
 ---
 
-# ⏰ Otomatik Başlatma
+## 🩺 Tanı Bilgileri
 
-Otomatik başlatma sırasında cihaz durumunda `ACTEMOT` alanının değiştiği gözlemlenmiştir.
-
-Örneğin:
-
-    ACTEMOT = 09994
-
-Ancak `ACTEMOT` alanının hedef sıcaklık ile aynı alanı paylaşması ve düşük bitlerde henüz tam olarak açıklanamayan bir işaretleyici bulunması nedeniyle otomatik başlatma için yazma desteği şu aşamada eklenmemiştir.
-
-Yanlış değer gönderilmesi hedef sıcaklık ayarını değiştirebilir.
-
----
-
-# 🩺 Diagnostik Alanlar
-
-APK analizi ve API araştırması sırasında aşağıdaki alanlar tespit edilmiştir.
+APK içerisinde aşağıdaki alanlar tespit edilmiştir. Kullanılabilirlik klima modeline ve firmware'e bağlıdır.
 
 | Alan | Açıklama |
 |---|---|
-| `ACERROR` | Hata bilgileri |
-| `ACERRTW` | UVC / partikül sensörü hata bilgileri |
-| `ACWARNG` | Uyarı bilgileri |
+| `ACERROR` | Hata bilgisi |
+| `ACERRTW` | UVC / partikül sensörü hatası |
+| `ACWARNG` | Uyarı |
 | `ACPOLVC` | VOC hava kalitesi |
 | `ACPOLPM` | Partikül / PM hava kalitesi |
 | `ACOAFLP` | Koku & alerjen filtre ömrü |
-| `ACPSCLP` | Partikül sensörü temizlik ömrü |
-| `ACSAFRS` | Filtre / sensör sayaç sıfırlama |
-| `ACVERSI` | Yazılım sürümü |
+| `ACPSCLP` | Partikül sensörü ömrü |
+| `ACSAFRS` | Filtre / sensör sıfırlama |
+| `ACVERSI` | Firmware bilgisi |
+
+Bazı cihazlarda bu alanlar hiç bulunmayabilir. Bu durumda ilgili özelliklerin kullanılamaması normaldir.
 
 ---
 
-# 🌫️ Hava Kalitesi
+## 🧪 Ham API Servisleri
 
-Bazı Vestel klima modellerinde hava kalitesi sensörleri bulunabilir.
-
-APK içerisinde tespit edilen alanlar:
-
-    ACPOLVC
-    ACPOLPM
-
-### VOC
-
-    ACPOLVC
-
-değerleri:
-
-| Değer | Anlam |
-|---:|---|
-| `0` | İyi |
-| `1` | Orta |
-| `2` | Kötü |
-
-### Partikül / PM
-
-    ACPOLPM
-
-değerleri:
-
-| Değer | Anlam |
-|---:|---|
-| `0` | Temiz |
-| `1` | Orta |
-| `2` | Kirli |
-
-> ⚠️ Bu alanların cihaz tarafından gönderilmesi donanıma bağlıdır.
-
----
-
-# 🧹 Filtre ve Sensör Ömrü
-
-APK'da aşağıdaki alanlar tespit edilmiştir:
-
-    ACOAFLP
-    ACPSCLP
-
-Bunlar sırasıyla:
-
-    Koku & Alerjen filtresi
-    Partikül sensörü
-
-ile ilişkilidir.
-
-Sayaç sıfırlama alanı:
-
-    ACSAFRS
-
-olarak tespit edilmiştir.
-
-Bilinen değerler:
-
-    1  = Filtre
-    10 = Partikül sensörü
-
----
-
-# 💡 RGB / Ortam Işığı
-
-APK spesifikasyonunda aşağıdaki alanlar tespit edilmiştir:
-
-    ACRGBON
-    ACRGBST
-    ACRGBBR
-
-Muhtemel anlamları:
-
-| Alan | Anlam |
-|---|---|
-| `ACRGBON` | Ortam ışığı aç/kapa |
-| `ACRGBST` | Işık tonu |
-| `ACRGBBR` | Parlaklık |
-
-Ancak bu özellik mevcut klima cihazında doğrulanmamıştır.
-
----
-
-# 🧪 ACVERSI — Yazılım Sürümü
-
-`ACVERSI` cihaz yazılım adı ve sürüm bilgilerini taşır.
-
-APK araştırmasına göre:
-
-    Alt bayt = Yazılım adı
-    Üst bayt = Sürüm
-
-Bilinen isim kodları:
-
-    3 = Meltem
-    4 = Yağmur
-
-Örneğin gerçek cihazda:
-
-    ACVERSI = 23043
-
-değeri gözlemlenmiştir.
-
----
-
-# 🔬 Ham Durum Görüntüleme
-
-Yeni özellikleri araştırmak için:
+### Cihazın ham durumunu görüntüleme
 
     vestel_ac.dump_raw_status
 
-servisi kullanılabilir.
-
-Bu servis cihazın API'den döndürdüğü ham alanları görüntülemek için kullanılır.
-
-Önerilen keşif yöntemi:
-
-    1. dump_raw_status çalıştır
-    2. Vestel Akıllı Yaşam uygulamasını aç
-    3. Bir özelliği değiştir
-    4. dump_raw_status tekrar çalıştır
-    5. Değişen alanları karşılaştır
-    6. Alanın ne yaptığını belirle
-    7. Gerekirse send_raw_code ile test et
-
----
-
-# 🧪 Ham Komut Gönderme
-
-Servis:
+### Ham komut gönderme
 
     vestel_ac.send_raw_code
 
-Örneğin:
+Örnek:
 
     action: vestel_ac.send_raw_code
     data:
       code: "ACFANPO00562"
 
-Bu örnek `ACFANPO00562` değerini cihaza göndermeyi dener.
+Bu servisler özellikle yeni özelliklerin araştırılması için kullanılabilir.
 
-> ⚠️ Ham komutları yalnızca ne yaptığını bildiğiniz değerlerle kullanın.
-
-Yanlış değerler cihaz davranışını değiştirebilir.
+> ⚠️ Ne yaptığını bilmediğiniz değerleri cihaza göndermeyin.
 
 ---
 
-# 🔎 APK ile Özellik Keşfi
+## 🔍 Yeni Özellik Keşfetme
 
-Bu entegrasyon geliştirilirken Vestel Akıllı Yaşam APK'sı içerisindeki alan ve komut isimleri incelenmiş, daha sonra gerçek cihazdan alınan durum bilgileriyle karşılaştırılmıştır.
+Resmi uygulamadaki bir özelliği araştırmak için:
 
-Örneğin:
+    dump_raw_status
+          ↓
+    Uygulamadan özelliği değiştir
+          ↓
+    dump_raw_status
+          ↓
+    Değişen alanı bul
+          ↓
+    Değeri test et
+          ↓
+    Home Assistant'a ekle
 
-    Vestel Akıllı Yaşam
-             │
-             ▼
-        APK analizi
-             │
-             ▼
-       Olası alanlar
-             │
-             ▼
-      Gerçek cihaz testi
-             │
-             ▼
-       Raw status karşılaştırması
-             │
-             ▼
-       Bit / değer analizi
-             │
-             ▼
-       Home Assistant entity
-             │
-             ▼
-        Kullanılabilir özellik
-
-Bu yöntem sayesinde resmi Home Assistant entegrasyonlarında bulunmayan birçok klima kontrolü keşfedilmiştir.
+Bu yöntemle dikey kanatçık, salınım, Turbo, Uyku, İyonizer, Tasarruf, Fan modu ve zamanlayıcı gibi birçok özellik keşfedilmiştir.
 
 ---
 
-# 🌐 API Mimarisi
+## ❤️ Emeği Geçenler
 
-Entegrasyonun temel iletişim yapısı:
+**Home Assistant entegrasyonu:**  
+Mutlu Tekir
 
-    Vestel Akıllı Yaşam
-             │
-             ▼
-    sh-native-api.homevsmart.com
-             │
-             ▼
-        AWS Cognito
-             │
-             ▼
-       Vestel Cloud API
-             │
-             ▼
-       Vestel AC Integration
-             │
-             ▼
-        Home Assistant
-             │
-             ▼
-          Klima
+**İlk Vestel API araştırması:**  
+Sezer İltekin
 
----
-
-# 🌐 Projenin Kökeni
-
-Bu entegrasyonun temelindeki API, Vestel **Akıllı Yaşam** mobil uygulamasının API'sinin tersine mühendislik yöntemiyle incelenmesi sonucu ortaya çıkarılmıştır.
-
-İlk API araştırmaları ve temel komut mantığı:
-
-**Sezer İltekin**
-
-tarafından geliştirilen:
-
+**Temel proje:**  
 https://github.com/iltekin/vestel-ac-remote-control
 
-projesine dayanmaktadır.
-
-Bu Home Assistant entegrasyonu, API mantığını Python/Home Assistant ortamına taşır ve APK ile gerçek cihaz üzerinde yapılan araştırmalarla ek özellikleri destekler.
+Bu entegrasyon, ilk API araştırmalarını temel alarak Home Assistant desteği ve APK / gerçek cihaz analizleriyle keşfedilen ek özellikleri bir araya getirir.
 
 ---
 
-# ❤️ Emeği Geçenler
+## ⚠️ Yasal Uyarı
 
-| Rol | Kişi |
-|---|---|
-| İlk API araştırması | [Sezer İltekin](https://x.com/sezeriltekin) |
-| İlk Node.js uygulaması | [vestel-ac-remote-control](https://github.com/iltekin/vestel-ac-remote-control) |
-| Home Assistant entegrasyonu | **Mutlu Tekir** |
-| Ek komutların keşfi | **Mutlu Tekir** |
-| APK analizi | **Mutlu Tekir** |
-| Gerçek cihaz doğrulaması | **Mutlu Tekir** |
+Bu proje resmi değildir ve Vestel ile bağlantılı değildir.
 
----
+Entegrasyon Vestel'in bulut API'sine bağlıdır. API, kimlik doğrulama sistemi veya servis tarafında yapılacak değişiklikler entegrasyonun çalışmasını engelleyebilir.
 
-# 📚 Kaynaklar
+Bazı özellikler klima modeli ve firmware sürümüne bağlıdır.
 
-### Vestel AC Home Assistant
-
-https://github.com/mutlutekir/Vestel_Klima_AirCon
-
-### İlk API araştırması
-
-https://github.com/iltekin/vestel-ac-remote-control
-
-### Home Assistant
-
-https://www.home-assistant.io/
-
-### HACS
-
-https://www.hacs.xyz/
-
----
-
-# ⚠️ Bilinen Sınırlamalar
-
-- Bu entegrasyon resmi Vestel entegrasyonu değildir.
-- Vestel API'si değişirse entegrasyon çalışmayabilir.
-- Bazı özellikler yalnızca belirli klima modellerinde bulunur.
-- Hava kalitesi / PM / VOC sensörleri donanıma bağlıdır.
-- Filtre ömrü bilgileri donanıma ve firmware'e bağlıdır.
-- Yatay kanatçık desteği her cihazda doğrulanmamıştır.
-- Bazı APK alanları teorik olarak tanımlanmış ancak her cihazda test edilmemiştir.
-- RGB / ortam ışığı alanları her cihazda bulunmayabilir.
-- Refresh token geçersiz hale gelirse yeniden kimlik doğrulama gerekebilir.
-
----
-
-# 🐛 Hata Bildirme
-
-Bir problem yaşarsanız GitHub Issues bölümünden bildirebilirsiniz:
+Sorun yaşarsanız:
 
 https://github.com/mutlutekir/Vestel_Klima_AirCon/issues
 
-Hata bildirirken mümkünse aşağıdaki bilgileri ekleyin:
+üzerinden issue açabilirsiniz.
 
-    Vestel klima modeli:
-    Home Assistant sürümü:
-    Vestel AC entegrasyon sürümü:
-    Hata mesajı:
-    dump_raw_status çıktısı:
-
-> 🔒 Şifre, refresh token, access token veya kişisel hesap bilgilerinizi kesinlikle paylaşmayın.
-
----
-
-# ⭐ Destek
-
-Bu proje işinize yaradıysa GitHub üzerinde ⭐ bırakabilirsiniz.
-
-https://github.com/mutlutekir/Vestel_Klima_AirCon
+> 🔒 Şifre, access token veya refresh token gibi bilgileri issue içerisinde paylaşmayın.
 
 ---
 
 <p align="center">
-  <strong>🌬️ Vestel AC + Home Assistant</strong>
+  🌬️ <strong>Vestel AC + Home Assistant</strong>
   <br>
-  <sub>Unofficial • Community Project • Reverse Engineered API</sub>
+  <sub>Unofficial Community Integration</sub>
 </p>
