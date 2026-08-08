@@ -1,4 +1,4 @@
-"""The Vestel AC (unofficial) integration."""
+"""Vestel Klima AirCon integration for Home Assistant."""
 from __future__ import annotations
 
 import logging
