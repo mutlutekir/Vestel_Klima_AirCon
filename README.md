@@ -1,9 +1,9 @@
 Vestel AC — Home Assistant Entegrasyonu (Unofficial)
-
 ![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)
 ![Version](https://img.shields.io/badge/version-0.4.1-blue?style=for-the-badge)
 ![Maintainer](https://img.shields.io/badge/maintainer-Mutlu%20Tekir-green?style=for-the-badge)
 ![Unofficial](https://img.shields.io/badge/resmi%20de%C4%9Fil-Vestel%20ile%20ba%C4%9Flant%C4%B1s%C4%B1%20yok-red?style=for-the-badge)
+
 Vestel Doğa/Flora serisi WiFi'li klimaları, resmi Vestel Akıllı Yaşam
 uygulamasına hiç ihtiyaç duymadan doğrudan Home Assistant'tan kontrol eden
 özel (custom) entegrasyon. Mod, fan hızı, kanatçık (salınım) pozisyonu,
