@@ -1,1 +1,37 @@
-
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Vestel AC setup",
+        "menu_options": {
+          "credentials": "Username / password (automatic)",
+          "token": "Paste a refresh token (fallback)"
+        }
+      },
+      "credentials": {
+        "title": "Sign in with your Vestel account",
+        "description": "Enter the email and password you use in the Vestel Akıllı Yaşam / Evin Aklı app. Home Assistant drives the same login screen the app uses, in the background - nothing else to install.",
+        "data": {
+          "username": "Username / Email",
+          "password": "Password"
+        }
+      },
+      "token": {
+        "title": "Set up with a refresh token",
+        "description": "If automatic login doesn't work for some reason, paste a refresh_token you obtained another way.",
+        "data": {
+          "refresh_token": "Refresh Token"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Wrong username or password (or the refresh_token is invalid/expired).",
+      "automation_failed": "Automatic login couldn't complete (Vestel's login page may have changed, or there's an extra verification step). Try the \"Paste a refresh token\" method instead.",
+      "cannot_connect": "Could not reach Vestel's servers.",
+      "no_devices": "Login succeeded but no AC devices were found on this account."
+    },
+    "abort": {
+      "already_configured": "This Vestel account is already configured."
+    }
+  }
+}
