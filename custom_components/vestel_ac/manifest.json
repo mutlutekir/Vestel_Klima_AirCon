@@ -1,0 +1,12 @@
+{
+  "domain": "vestel_ac",
+  "name": "Vestel AC (Unofficial)",
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://github.com/iltekin/vestel-ac-remote-control",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/iltekin/vestel-ac-remote-control/issues",
+  "requirements": [],
+  "version": "0.4.1"
+}

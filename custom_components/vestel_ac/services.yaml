@@ -1,0 +1,36 @@
+send_raw_code:
+  name: Ham kod gönder (debug)
+  description: >-
+    Vestel klimasına elle yazılmış bir komut kodu (ör. "ACSWUD00001") gönderir.
+    Yeni butonları (dikey salınım, ses/buzzer, vb.) tersine mühendislikle
+    çözerken denemeler yapmak için kullanılır.
+  fields:
+    device_id:
+      name: Cihaz
+      description: Vestel AC klima cihazı.
+      required: true
+      selector:
+        device:
+          integration: vestel_ac
+    code:
+      name: Kod
+      description: Gönderilecek ham komut kodu, ör. ACSWUD00001
+      required: true
+      example: "ACSWUD00001"
+      selector:
+        text:
+
+dump_raw_status:
+  name: Ham durumu göster (debug)
+  description: >-
+    Vestel'in bulut API'sinden gelen tüm ham durum alanlarını (ACGENSI,
+    ACTEMOT dışındakiler dahil) bir bildirimde gösterir. Uygulamada bir
+    tuşa basmadan önce/sonra çağırıp farkı bulmak için kullanılır.
+  fields:
+    device_id:
+      name: Cihaz
+      description: Vestel AC klima cihazı.
+      required: true
+      selector:
+        device:
+          integration: vestel_ac

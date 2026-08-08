@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Vestel AC kurulumu",
+        "menu_options": {
+          "credentials": "Kullanıcı adı / şifre (otomatik)",
+          "token": "Refresh token yapıştır (yedek yöntem)"
+        }
+      },
+      "credentials": {
+        "title": "Vestel hesabınla giriş yap",
+        "description": "Vestel Akıllı Yaşam / Evin Aklı uygulamasında kullandığın e-posta ve şifreyi gir. Home Assistant, uygulamanın giriş ekranının aynısını arka planda kullanarak otomatik giriş yapar - başka bir şey kurmana gerek yok.",
+        "data": {
+          "username": "Kullanıcı adı / E-posta",
+          "password": "Şifre"
+        }
+      },
+      "token": {
+        "title": "Refresh token ile kur",
+        "description": "Otomatik giriş bir sebeple çalışmazsa, başka bir yerden edindiğin refresh_token'ı buraya yapıştır.",
+        "data": {
+          "refresh_token": "Refresh Token"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Kullanıcı adı veya şifre hatalı (ya da refresh_token geçersiz/süresi dolmuş).",
+      "automation_failed": "Otomatik giriş tamamlanamadı (Vestel giriş sayfası değişmiş ya da ek bir doğrulama adımı olabilir). \"Refresh token yapıştır\" yöntemini deneyebilirsin.",
+      "cannot_connect": "Vestel sunucularına ulaşılamadı.",
+      "no_devices": "Giriş başarılı ama bu hesapta hiçbir klima bulunamadı."
+    },
+    "abort": {
+      "already_configured": "Bu Vestel hesabı zaten kurulu."
+    }
+  }
+}
