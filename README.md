@@ -19,7 +19,7 @@ altında toplanır.
 | Rol | Kişi |
 |---|---|
 | **İlk Geliştirici** | [Sezer İltekin](https://x.com/sezeriltekin) — Vestel'in bulut API'sini ilk tersine mühendislikle çözen ve [vestel-ac-remote-control](https://github.com/iltekin/vestel-ac-remote-control) Node.js projesini yazan kişi. Bu proje, [bu tweet](https://x.com/sezeriltekin/status/2069174425014927536) ile başladı. |
-| **Home Assistant Entegrasyonu** | **Mutlu Tekir** — Sezer'in bulduğu API'yi Home Assistant'a taşıyan, ek komutları (kanatçık, turbo, uyku, iyonizer, oto-kapatma, tanı sensörleri vb.) APK üzerinden keşfedip ekleyen kişi. |
+| **Home Assistant Entegrasyonu** | **Mutlu Tekir** — Sezer İltekin'in bulduğu API'yi Home Assistant'a taşıyan, ek komutları (kanatçık, turbo, uyku, iyonizer, oto-kapatma, tanı sensörleri vb.) APK üzerinden keşfedip ekleyen kişi. |
 | **Veri Kaynağı** | Vestel Akıllı Yaşam bulut API'si (`sh-native-api.homevsmart.com`) + AWS Cognito kimlik doğrulama. |
 
 > *Bu resmi olmayan (unofficial) bir entegrasyondur, Vestel ile hiçbir
@@ -37,24 +37,6 @@ geliştirilmiş, kendi sunucunda çalışan bir klima kontrol paneli olan
 (Node.js + Express) projesine dayanıyor. Bu Home Assistant entegrasyonu, o
 projenin komut mantığını Python'a taşır ve APK'dan keşfedilen ek alanlarla
 genişletir.
-
-Orijinal Node.js projesinin özellikleri:
-
-- **Tam kontrol** — açma/kapama, mod (soğutma / ısıtma / nem alma), fan
-  hızı (oto + 5 kademe), sıcaklık (18–30 °C)
-- **Gerçek zamanlı durum** — cihaz durumu açılışta okunur, 30 saniyede bir
-  güncellenir
-- **Anlık tepki** — kontroller hemen yanıt verir, senkronizasyon arka
-  planda gerçekleşir
-- **Çoklu cihaz** — tüm evler ve cihazlar API'den otomatik çekilir, elle
-  tanımlama gerekmez
-- **Otomasyon** — belirli saatte veya oda sıcaklığı eşiğinde otomatik
-  aç/kapat
-- **Siri kısayolları** — her komut için hazır URL ve adım adım kurulum
-  rehberi
-- **API key koruması** — kendin belirlersin, üçüncü taraf hesap gerekmez
-
----
 
 ## 🌟 Bu Entegrasyonun Özellikleri
 
