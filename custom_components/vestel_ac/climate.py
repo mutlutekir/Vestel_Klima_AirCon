@@ -1,4 +1,4 @@
-"""Climate platform for the Vestel AC (unofficial) integration."""
+"""Climate platform for the Vestel Klima AirCon integration."""
 from __future__ import annotations
 
 from typing import Any
