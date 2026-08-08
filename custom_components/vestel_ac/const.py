@@ -1,4 +1,4 @@
-"""Constants for the Vestel AC (unofficial) integration."""
+"""Constants for the Vestel Klima AirCon integration."""
 
 DOMAIN = "vestel_ac"
 
