@@ -53,8 +53,6 @@ genişletir.
   koku&alerjen filtresi ömrü, parçacık sensörü temizlik ömrü, yazılım
   sürümü (cihazınızda yoksa otomatik olarak "kullanılamıyor" görünür,
   zararsızdır)
-- 🖼️ **Cihaz görseli** — marka görseli ilk kurulumda otomatik olarak
-  `www/` klasörüne kopyalanır, elle hiçbir şey yapmana gerek yok
 - 🔐 **Sıfır elle token yönetimi** — kurulumda e-posta/şifre gir, arka
   planda otomatik giriş yapılır; refresh_token'ı elle bulman gerekmez
   (yedek yöntem de mevcut)
