@@ -33,6 +33,7 @@ PLATFORMS: list[Platform] = [
     Platform.SWITCH,
     Platform.TIME,
     Platform.SENSOR,
+    Platform.BINARY_SENSOR,
 ]
 
 SERVICE_SEND_RAW_CODE = "send_raw_code"
@@ -168,14 +169,57 @@ class VestelAcCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
 
     async def _async_update_data(self) -> dict[str, dict[str, Any]]:
         result: dict[str, dict[str, Any]] = {}
-        try:
-            for device_id in self.device_ids:
+        failed: list[str] = []
+        for device_id in self.device_ids:
+            try:
                 result[device_id] = await self.api.async_get_status(device_id)
-        except VestelAuthError as err:
-            raise UpdateFailed(f"Auth error talking to Vestel cloud: {err}") from err
-        except VestelAcError as err:
-            raise UpdateFailed(f"Error talking to Vestel cloud: {err}") from err
+            except VestelAuthError as err:
+                # Auth failures affect every device equally - no point
+                # hammering the remaining ones with requests that will fail
+                # the same way.
+                raise UpdateFailed(
+                    f"Auth error talking to Vestel cloud: {err}"
+                ) from err
+            except VestelAcError as err:
+                # A single appliance being offline (or temporarily
+                # unparseable) must not blank out every other device's
+                # data - the accounts can mix ACs and other appliances.
+                _LOGGER.warning("Vestel AC: could not refresh %s: %s", device_id, err)
+                failed.append(device_id)
+        if failed and not result:
+            raise UpdateFailed(f"All devices failed to refresh: {', '.join(failed)}")
         return result
+
+
+def filter_ac_devices(stored: dict[str, Any]) -> list[dict[str, str]]:
+    """Return only the stored devices that parsed as air conditioners.
+
+    The Vestel cloud serves every appliance type through the same legacy
+    endpoints; the climate/select/switch/time/button platforms only make
+    sense for ACs, so everything else (e.g. fridges) is left to the generic
+    raw diagnostic sensors in sensor.py.
+    """
+    coordinator: VestelAcCoordinator = stored["coordinator"]
+    return [
+        device
+        for device in stored["devices"]
+        if coordinator.data.get(device["device_id"], {}).get("is_ac", False)
+    ]
+
+
+def filter_fridge_devices(stored: dict[str, Any]) -> list[dict[str, str]]:
+    """Return only the stored devices that parsed as fridges.
+
+    Counterpart of ``filter_ac_devices`` for the appliance types the
+    generic raw sensors cannot express yet (currently the fridge door in
+    binary_sensor.py).
+    """
+    coordinator: VestelAcCoordinator = stored["coordinator"]
+    return [
+        device
+        for device in stored["devices"]
+        if coordinator.data.get(device["device_id"], {}).get("is_fridge", False)
+    ]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

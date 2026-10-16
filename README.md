@@ -239,6 +239,38 @@ Some fields may not be returned by the device. Missing capabilities are therefor
 
 ---
 
+## 🔀 Multi-Appliance Support (fridges & other devices)
+
+The Vestel Smart Life cloud serves every appliance type through the same endpoints. As of v1.1.0, the integration no longer assumes your account only contains air conditioners:
+
+- AC entities (climate, louver, turbo/sleep/ionizer/eco switches, auto-off timer) are created **only** for air conditioners.
+- Other appliances (e.g. Vestel fridges) appear as a normal device with **raw diagnostic sensors** for every field the cloud returns - ideal for feature discovery.
+- One failing or unsupported appliance no longer breaks the whole integration (previously a fridge on the account caused a `KeyError: 'ACGENSI'` setup failure).
+
+### Fridge support (work in progress)
+
+A real Vestel fridge returns a field set that all starts with `RF`, so the integration detects it automatically and, instead of exposing it as an AC, creates the following on the fridge device:
+
+- **door binary sensors** - `Soğutucu Kapısı` and `Dondurucu Kapısı`;
+- decoded **temperature sensors** - `Soğutucu Sıcaklığı` and `Dondurucu Sıcaklığı` (in °C);
+- read-only **mode binary sensors** - `Tatil Modu`, `Ekonomi Modu`, `Hızlı Soğutma`, `Hızlı Dondurma`, `Çocuk Kilidi` and `Ekran Koruyucu`.
+
+| Field | Meaning | Status |
+| --- | --- | --- |
+| `RFDOORA` | Door state - a 2-bit field, one bit per door: `00003` (0b11) both closed, `00001` (0b01) fridge door open, `00002` (0b10) freezer door open (confirmed on a live device: the fridge alarmed ~2 min after the fridge door was left open) | **decoded** -> `Soğutucu Kapısı` + `Dondurucu Kapısı` binary sensors |
+| `RFTEMSE` | Temperature setpoints - bit-packed, **not** two decimal halves: high byte = cooler °C, low byte = absolute freezer °C, i.e. `RFTEMSE = (cooler << 8) \| abs(freezer)`. E.g. `00528` (0x210) = +2 °C / -16 °C, `01304` (0x518) = +5 °C / -24 °C (confirmed against a 15-point calibration table) | **decoded** -> `Soğutucu Sıcaklığı` + `Dondurucu Sıcaklığı` temperature sensors |
+| `RFMODEA` | Mode bit field - one bit per mode: `00002` (bit 1) fast freeze, `00004` (bit 2) fast cool, `00008` (bit 3) holiday, `00016` (bit 4) eco. The bits combine, e.g. `00006` = fast cool + fast freeze | **decoded** -> `Tatil Modu` / `Ekonomi Modu` / `Hızlı Soğutma` / `Hızlı Dondurma` binary sensors |
+| `RFSSAVE` | Screen saver - `00000` off, `00001` on | **decoded** -> `Ekran Koruyucu` binary sensor |
+| `RFDCOOL` | Fast cool | undecoded |
+| `RFDEFEC` | Defrost | undecoded |
+| `RFCOOER` | Cooler | undecoded |
+| `RFCLOCK` | Child lock - `00000` off, `00001` on | **decoded** -> `Çocuk Kilidi` binary sensor |
+| `WIFIRSS` / `WIFISET` | Wi-Fi signal / settings | raw |
+
+Two modes also change what the fridge's own panel displays, and the temperature sensors mirror that: with **eco** on they report `E` for both setpoints (instead of a °C number), and with **holiday** on the cooler is switched off so `Soğutucu Sıcaklığı` reports *unknown* (`--`) while the freezer keeps its setpoint. The decoded numbers stay available in the raw `RFTEMSE` sensor and in each temperature sensor's attributes.
+
+Fridge *controls* (setting the temperature, toggling eco, ...) are not implemented yet - the modes above are therefore read-only binary sensors. The command format is undocumented and the integration currently always sends `device_type: "AC"`. Use the **Feature Discovery** workflow below to decode them - anything you find is welcome as a PR.
+
 ## 🧪 Raw API Services
 
 For advanced testing and feature discovery, the integration provides raw API services.
@@ -534,6 +566,38 @@ APK içerisinde aşağıdaki alanlar tespit edilmiştir. Kullanılabilirlik klim
 Bazı cihazlarda bu alanlar hiç bulunmayabilir. Bu durumda ilgili özelliklerin kullanılamaması normaldir.
 
 ---
+
+## 🔀 Çoklu Cihaz Desteği (buzdolabı ve diğer cihazlar)
+
+Vestel Akıllı Yaşam bulutu, tüm cihaz tiplerine aynı uç noktalar üzerinden hizmet verir. v1.1.0 itibarıyla entegrasyon, hesabınızda sadece klima olduğunu varsaymıyor:
+
+- Klima varlıkları (iklim, kanatçık, turbo/uyku/iyonizer/tasarruf anahtarları, otomatik kapatma) **yalnızca klimalar** için oluşturulur.
+- Diğer cihazlar (ör. Vestel buzdolabı), bulutun döndürdüğü her alan için **ham tanı sensörleriyle** birlikte normal bir cihaz olarak görünür - özellik keşfi için idealdir.
+- Tek bir cihazın hatası veya desteklenmemesi artık tüm entegrasyonu bozmaz (daha önce hesapta buzdolabı olması `KeyError: 'ACGENSI'` kurulum hatasına yol açıyordu).
+
+### Buzdolabı desteği (geliştirme aşamasında)
+
+Gerçek bir Vestel buzdolabı, tamamı `RF` ile başlayan bir alan kümesi döndürüyor; entegrasyon bunu otomatik algılıyor ve cihazı klima gibi göstermek yerine buzdolabı cihazı üzerinde şunları oluşturuyor:
+
+- **kapı binary sensörleri** - `Soğutucu Kapısı` ve `Dondurucu Kapısı`;
+- çözülmüş **sıcaklık sensörleri** - `Soğutucu Sıcaklığı` ve `Dondurucu Sıcaklığı` (°C);
+- salt okunur **mod binary sensörleri** - `Tatil Modu`, `Ekonomi Modu`, `Hızlı Soğutma`, `Hızlı Dondurma`, `Çocuk Kilidi` ve `Ekran Koruyucu`.
+
+| Alan | Anlamı | Durum |
+| --- | --- | --- |
+| `RFDOORA` | Kapı durumu - kapı başına bir bitlik 2 bitlik alan: `00003` (0b11) ikisi de kapalı, `00001` (0b01) buzdolabı kapağı açık, `00002` (0b10) dondurucu kapağı açık (gerçek cihazda doğrulandı: buzdolabı kapağı açık bırakılınca ~2 dk sonra cihaz alarm verdi) | **çözüldü** -> `Soğutucu Kapısı` + `Dondurucu Kapısı` binary sensörleri |
+| `RFTEMSE` | Sıcaklık ayarları - bit paketli, **iki ondalık yarım değil**: yüksek bayt = soğutucu °C, düşük bayt = dondurucunun mutlak değeri °C, yani `RFTEMSE = (cooler << 8) \| abs(freezer)`. Ör. `00528` (0x210) = +2 °C / -16 °C, `01304` (0x518) = +5 °C / -24 °C (15 noktalı kalibrasyon tablosuyla doğrulandı) | **çözüldü** -> `Soğutucu Sıcaklığı` + `Dondurucu Sıcaklığı` sıcaklık sensörleri |
+| `RFMODEA` | Mod bit alanı - her mod için bir bit: `00002` (bit 1) hızlı dondurma, `00004` (bit 2) hızlı soğutma, `00008` (bit 3) tatil, `00016` (bit 4) ekonomi. Bitler birleşebilir, ör. `00006` = hızlı soğutma + hızlı dondurma | **çözüldü** -> `Tatil Modu` / `Ekonomi Modu` / `Hızlı Soğutma` / `Hızlı Dondurma` binary sensörleri |
+| `RFSSAVE` | Ekran koruyucu - `00000` kapalı, `00001` açık | **çözüldü** -> `Ekran Koruyucu` binary sensörü |
+| `RFDCOOL` | Hızlı soğutma | çözülmedi |
+| `RFDEFEC` | Buz çözme | çözülmedi |
+| `RFCOOER` | Soğutucu | çözülmedi |
+| `RFCLOCK` | Çocuk kilidi - `00000` kapalı, `00001` açık | **çözüldü** -> `Çocuk Kilidi` binary sensörü |
+| `WIFIRSS` / `WIFISET` | Wi-Fi sinyali / ayarları | ham |
+
+İki mod, buzdolabının kendi göstergesinde ne yazdığını da değiştiriyor ve sıcaklık sensörleri bunu yansıtıyor: **ekonomi** açıkken ikisi de °C yerine `E` gösterir; **tatil** açıkken soğutucu kapatıldığı için `Soğutucu Sıcaklığı` *bilinmiyor* (`--`) olur, dondurucu ise ayarını korur. Çözülmüş sayısal değerler ham `RFTEMSE` sensöründe ve her sıcaklık sensörünün niteliklerinde erişilebilir kalır.
+
+Buzdolabı *kontrolleri* (sıcaklığı ayarlama, eco açma, ...) henüz uygulanmadı - bu yüzden yukarıdaki modlar salt okunur binary sensörlerdir. Komut formatı dokümante değil ve entegrasyon şu an her zaman `device_type: "AC"` gönderiyor. Çözmek için aşağıdaki **Yeni Özellik Keşfetme** iş akışını kullanın; bulduklarınız PR olarak memnuniyetle karşılanır.
 
 ## 🧪 Ham API Servisleri
 

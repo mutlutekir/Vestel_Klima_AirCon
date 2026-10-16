@@ -1,0 +1,5 @@
+# Lightweight unit-test deps. api.py only needs aiohttp + stdlib; the
+# integration's __init__.py imports Home Assistant, which the tests avoid
+# via the stub packages in tests/conftest.py.
+pytest>=8
+aiohttp>=3.9

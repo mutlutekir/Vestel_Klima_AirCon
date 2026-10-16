@@ -16,7 +16,7 @@ APP_CLIENT_SECRET = "mc4j2r13mctk8u46poaic9snm83khk458c8a1uupk6sqoqar90c"
 # -------------------------------------------------------------------------
 
 DEFAULT_REDIRECT_URI = "evinakli://signin"
-DEFAULT_SCAN_INTERVAL = 60  # seconds
+DEFAULT_SCAN_INTERVAL = 10  # seconds
 
 # Confirmed from the app's own amplifyconfiguration.json (AWS Amplify Auth config).
 DEFAULT_SCOPES = "profile phone openid email aws.cognito.signin.user.admin"

@@ -19,7 +19,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from . import VestelAcCoordinator
+from . import VestelAcCoordinator, filter_ac_devices
 from .api import VestelAcApi
 from .const import DOMAIN
 
@@ -30,7 +30,9 @@ async def async_setup_entry(
     stored = hass.data[DOMAIN][entry.entry_id]
     coordinator: VestelAcCoordinator = stored["coordinator"]
     api: VestelAcApi = stored["api"]
-    devices: list[dict[str, str]] = stored["devices"]
+    # Only air conditioners get control entities; other appliances
+    # (fridges...) are served by the generic raw sensors in sensor.py.
+    devices: list[dict[str, str]] = filter_ac_devices(stored)
 
     async_add_entities(
         _VestelAcAutoOffTime(coordinator, api, entry.entry_id, device)

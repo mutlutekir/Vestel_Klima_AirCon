@@ -3,15 +3,20 @@ from __future__ import annotations
 
 from typing import Any
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
+)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import PERCENTAGE, EntityCategory
+from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import VestelAcCoordinator
+from .api import fridge_temp_display
 from .const import DOMAIN
 
 # Numeric PM2.5 / TVOC fields are not present on every Vestel AC model.
@@ -89,72 +94,95 @@ async def async_setup_entry(
 
     for device in devices:
         device_id = device["device_id"]
+        status = coordinator.data.get(device_id, {})
+        is_ac = status.get("is_ac", False)
 
-        # Core diagnostic/air-quality sensors.
-        entities.extend(
-            [
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "ACROOTE",
-                                   "Klima Oda Sıcaklığı", "°C", "room_temp"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "ACPOLPM",
-                                   "PM2.5 Hava Kalitesi", None, "pm_quality"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "ACPOLVC",
-                                   "VOC Hava Kalitesi", None, "voc_quality"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "ACOAFLP",
-                                   "Koku/Alerjen Filtre Ömrü", PERCENTAGE, "odor_filter"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "ACPSCLP",
-                                   "Partikül Sensörü Temizleme Ömrü", PERCENTAGE, "particle_filter"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "ACERROR",
-                                   "Klima Hata Kodu", None, "ac_error"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "ACERRTW",
-                                   "Klima İkinci Hata Kodu", None, "ac_error2"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "ACWARNG",
-                                   "Klima Uyarı Kodu", None, "warning"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "CONNRSS",
-                                   "Bağlantı RSSI", "dBm", "conn_rssi"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "WIFIRSS",
-                                   "Wi-Fi RSSI", None, "wifi_rssi"),
-                _VestelKnownSensor(coordinator, entry.entry_id, device, "ACVERSI",
-                                   "Klima Yazılım Versiyonu", None, "version"),
-            ]
-        )
-
-        # Numeric PM2.5 / TVOC: unavailable if this particular model/API
-        # does not publish a numeric field. ACPOLPM/ACPOLVC remain quality
-        # classification sensors above.
-        entities.append(
-            _VestelAliasSensor(
-                coordinator, entry.entry_id, device,
-                "pm25", "PM2.5", PM25_KEYS, "µg/m³",
+        # AC-specific known sensors: the fields and names below only make
+        # sense for air conditioners. Other appliance types (e.g. fridges)
+        # are covered by the raw sensors at the bottom of this loop.
+        # Fridge setpoints decoded from RFTEMSE (cooler high byte, freezer
+        # low byte) - plain temperature sensors rather than diagnostics, so
+        # they can be charted and automated on.
+        if status.get("is_fridge"):
+            entities.extend(
+                [
+                    _VestelFridgeTempSensor(
+                        coordinator, entry.entry_id, device,
+                        "cooler", "Soğutucu Sıcaklığı", "fridge_cooler_temp",
+                    ),
+                    _VestelFridgeTempSensor(
+                        coordinator, entry.entry_id, device,
+                        "freezer", "Dondurucu Sıcaklığı", "fridge_freezer_temp",
+                    ),
+                ]
             )
-        )
-        entities.append(
-            _VestelAliasSensor(
-                coordinator, entry.entry_id, device,
-                "tvoc", "TVOC", TVOC_KEYS, "ppb",
-            )
-        )
 
-        # Individual diagnostic bits from ACERROR / ACERRTW.
-        for bit, label in ERROR_BITS.items():
+        if is_ac:
+            entities.extend(
+                [
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "ACROOTE",
+                                       "Klima Oda Sıcaklığı", "°C", "room_temp"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "ACPOLPM",
+                                       "PM2.5 Hava Kalitesi", None, "pm_quality"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "ACPOLVC",
+                                       "VOC Hava Kalitesi", None, "voc_quality"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "ACOAFLP",
+                                       "Koku/Alerjen Filtre Ömrü", PERCENTAGE, "odor_filter"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "ACPSCLP",
+                                       "Partikül Sensörü Temizleme Ömrü", PERCENTAGE, "particle_filter"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "ACERROR",
+                                       "Klima Hata Kodu", None, "ac_error"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "ACERRTW",
+                                       "Klima İkinci Hata Kodu", None, "ac_error2"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "ACWARNG",
+                                       "Klima Uyarı Kodu", None, "warning"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "CONNRSS",
+                                       "Bağlantı RSSI", "dBm", "conn_rssi"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "WIFIRSS",
+                                       "Wi-Fi RSSI", None, "wifi_rssi"),
+                    _VestelKnownSensor(coordinator, entry.entry_id, device, "ACVERSI",
+                                       "Klima Yazılım Versiyonu", None, "version"),
+                ]
+            )
+
+            # Numeric PM2.5 / TVOC: unavailable if this particular model/API
+            # does not publish a numeric field. ACPOLPM/ACPOLVC remain quality
+            # classification sensors above.
             entities.append(
-                _VestelErrorBitSensor(
+                _VestelAliasSensor(
                     coordinator, entry.entry_id, device,
-                    source="ACERROR", bit=bit, label=label,
+                    "pm25", "PM2.5", PM25_KEYS, "µg/m³",
                 )
             )
-        for bit, label in ERRTW_BITS.items():
             entities.append(
-                _VestelErrorBitSensor(
+                _VestelAliasSensor(
                     coordinator, entry.entry_id, device,
-                    source="ACERRTW", bit=bit, label=label,
+                    "tvoc", "TVOC", TVOC_KEYS, "ppb",
                 )
             )
+
+            # Individual diagnostic bits from ACERROR / ACERRTW.
+            for bit, label in ERROR_BITS.items():
+                entities.append(
+                    _VestelErrorBitSensor(
+                        coordinator, entry.entry_id, device,
+                        source="ACERROR", bit=bit, label=label,
+                    )
+                )
+            for bit, label in ERRTW_BITS.items():
+                entities.append(
+                    _VestelErrorBitSensor(
+                        coordinator, entry.entry_id, device,
+                        source="ACERRTW", bit=bit, label=label,
+                    )
+                )
 
         # Every field returned by the cloud is also exposed as a raw
-        # diagnostic sensor. This is intentional for reverse engineering:
-        # when you press a new function in the official app, its changing
-        # ACxxxx value immediately becomes visible in HA.
-        raw = coordinator.data.get(device_id, {}).get("raw", {})
+        # diagnostic sensor - for every appliance type, not just ACs. This
+        # is intentional for reverse engineering: when you press a new
+        # function in the official app (also on fridges), its changing
+        # value immediately becomes visible in HA.
+        raw = status.get("raw", {})
         if isinstance(raw, dict):
             for key in raw:
                 entities.append(
@@ -178,11 +206,16 @@ class _VestelBaseSensor(CoordinatorEntity[VestelAcCoordinator], SensorEntity):
     ) -> None:
         super().__init__(coordinator)
         self._device_id = device["device_id"]
+        # The same base sensor serves ACs and non-AC appliances (fridges get
+        # the raw RF* fields). Label the device honestly instead of calling
+        # every appliance "Smart AC (WiFi)".
+        status = coordinator.data.get(self._device_id, {})
+        model = "Buzdolabı" if status.get("is_fridge") else "Smart AC (WiFi)"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._device_id)},
             manufacturer="Vestel",
             name=device.get("device_name", self._device_id),
-            model="Smart AC (WiFi)",
+            model=model,
         )
         self._entry_id = entry_id
 
@@ -219,6 +252,72 @@ class _VestelKnownSensor(_VestelBaseSensor):
         if self._kind in {"conn_rssi"}:
             return _number(value)
         return value
+
+
+class _VestelFridgeTempSensor(_VestelBaseSensor):
+    """A decoded fridge setpoint (cooler or freezer), from RFTEMSE.
+
+    Normally the value is a plain °C number. Two modes change what the
+    fridge's own panel shows, and we mirror them:
+
+    * eco mode on -> the panel shows ``E`` for **both** setpoints, so the
+      state becomes the string ``"E"``;
+    * holiday mode on -> the cooler is switched off, so there is no cooler
+      reading at all (``unknown``/``--``) while the freezer keeps its
+      setpoint.
+
+    When the state is not a number the temperature device class, unit and
+    state class are dropped, so Home Assistant never tries to parse ``E``
+    as a temperature.
+    """
+
+    # Unlike the raw diagnostic sensors this is a normal reading entity.
+    _attr_entity_category = None
+
+    def __init__(
+        self, coordinator, entry_id, device, which, name, suffix
+    ) -> None:
+        super().__init__(coordinator, entry_id, device)
+        self._which = which
+        self._attr_name = name
+        self._attr_unique_id = f"{entry_id}_{device['device_id']}_{suffix}"
+
+    @property
+    def _fridge(self) -> dict[str, Any]:
+        status = self.coordinator.data.get(self._device_id, {})
+        fridge = status.get("fridge")
+        return fridge if isinstance(fridge, dict) else {}
+
+    @property
+    def native_value(self) -> int | str | None:
+        return fridge_temp_display(self._fridge, self._which)
+
+    @property
+    def _is_numeric(self) -> bool:
+        return isinstance(self.native_value, (int, float))
+
+    @property
+    def device_class(self) -> SensorDeviceClass | None:
+        return SensorDeviceClass.TEMPERATURE if self._is_numeric else None
+
+    @property
+    def native_unit_of_measurement(self) -> str | None:
+        return UnitOfTemperature.CELSIUS if self._is_numeric else None
+
+    @property
+    def state_class(self) -> SensorStateClass | None:
+        return SensorStateClass.MEASUREMENT if self._is_numeric else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        # Keep the undecoded RFTEMSE value visible next to the decoded °C,
+        # plus the two mode flags that override what is shown.
+        fridge = self._fridge
+        return {
+            "ham_deger": fridge.get("temp_raw"),
+            "tatil_modu": fridge.get("holiday"),
+            "ekonomi_modu": fridge.get("eco"),
+        }
 
 
 class _VestelAliasSensor(_VestelBaseSensor):
