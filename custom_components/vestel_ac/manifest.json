@@ -1,7 +1,7 @@
 {
   "domain": "vestel_ac",
   "name": "Vestel Klima AirCon",
-  "codeowners": [],
+  "codeowners": ["@mutlutekir"],
   "config_flow": true,
   "documentation": "https://github.com/mutlutekir/Vestel_Klima_AirCon",
   "integration_type": "hub",
