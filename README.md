@@ -1,4 +1,4 @@
-# 🌬️ Vestel AC — Home Assistant Integration
+# 🌬️ Vestel Smart Life — Home Assistant Integration
 
 <p align="center">
   <a href="#english">🇬🇧 English</a>
@@ -7,11 +7,11 @@
 </p>
 
 <p align="center">
-  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Klima_AirCon&category=integration">
+  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Smart_Life&category=integration">
     <img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Install with HACS">
   </a>
   &nbsp;
-  <a href="https://my.home-assistant.io/redirect/config_flow_start/?domain=vestel_ac">
+  <a href="https://my.home-assistant.io/redirect/config_flow_start/?domain=vestel_smart_life">
     <img src="https://my.home-assistant.io/badges/config_flow_start.svg" alt="Add to Home Assistant">
   </a>
 </p>
@@ -22,11 +22,16 @@
 
 # 🇬🇧 English
 
-Vestel AC is an unofficial Home Assistant custom integration for Wi-Fi enabled Vestel Doğa / Flora series air conditioners.
+Vestel Smart Life is an unofficial Home Assistant custom integration for devices in the Vestel Smart Life / Evin Aklı app. Air conditioners (Doğa / Flora series) are supported today; other appliance families are planned.
+
+> **Upgrading from 1.0.x ("Vestel AC")?** The integration now has its own domain, `vestel_smart_life`. Remove the old *Vestel AC* entry, install this version and add *Vestel Smart Life* again. Entity IDs change.
+
 
 It communicates directly with the Vestel Smart Life cloud API and provides advanced controls that are not normally exposed by Home Assistant.
 
 > ⚠️ This is an unofficial community project and is not affiliated with Vestel.
+
+> **Tested on:** one air conditioner (variant `FLORA#MELTEM`, Wi-Fi card `HM07`). Other models should work for the common controls but are untested; please attach the diagnostics when reporting a problem.
 
 ## ✨ Features
 
@@ -35,7 +40,6 @@ It communicates directly with the Vestel Smart Life cloud API and provides advan
 - 🌀 Auto + 1-5 fan speeds
 - ↕️ Vertical louver position control
 - 🔄 Vertical swing / stop swing
-- ↔️ Horizontal louver support where available
 - ⚡ Turbo mode
 - 🌙 Sleep mode
 - 🍃 Eco / Energy Saving mode
@@ -46,6 +50,7 @@ It communicates directly with the Vestel Smart Life cloud API and provides advan
 - 🧹 Filter / particle-sensor lifetime information where available
 - 🧪 Raw API status and command services
 - 🔐 Automatic authentication with Vestel account credentials
+- 📡 Live state: changes made with the remote control or the app show up within seconds
 
 ---
 
@@ -53,7 +58,7 @@ It communicates directly with the Vestel Smart Life cloud API and provides advan
 
 ### HACS — Recommended
 
-<a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Klima_AirCon&category=integration">
+<a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Smart_Life&category=integration">
   <img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Install with HACS">
 </a>
 
@@ -63,17 +68,17 @@ Or manually:
 2. Open ⋮ → Custom repositories.
 3. Add:
 
-    https://github.com/mutlutekir/Vestel_Klima_AirCon
+    https://github.com/mutlutekir/Vestel_Smart_Life
 
 4. Select **Integration**.
-5. Install **Vestel AC**.
+5. Install **Vestel Smart Life**.
 6. Restart Home Assistant.
 
 ### Manual
 
 Download the latest release and copy:
 
-    custom_components/vestel_ac
+    custom_components/vestel_smart_life
 
 to:
 
@@ -91,7 +96,7 @@ Go to:
 
 Search for:
 
-    Vestel AC
+    Vestel Smart Life
 
 The integration supports:
 
@@ -116,7 +121,7 @@ After authentication, available Vestel air conditioners are automatically discov
 | Fan Auto / 1-5 | ✅ |
 | Vertical Louver | ✅ |
 | Vertical Swing | ✅ |
-| Horizontal Louver | ⚠️ Model dependent |
+| Horizontal Louver | ❌ Not yet (encoding unconfirmed) |
 | Turbo | ✅ |
 | Sleep | ✅ |
 | Eco | ✅ |
@@ -157,7 +162,7 @@ The mode and fan speed are combined using:
 |---|---|
 | 0 | Turbo |
 | 1-3 | Vertical louver |
-| 4-6 | Horizontal louver |
+| 4-6 | Horizontal louver (unconfirmed, read-only) |
 | 7 | Sleep |
 | 8 | Ionizer |
 | 9 | Eco |
@@ -201,6 +206,19 @@ Turbo is reflected in the `ACGENSI` state and was observed as:
 
 ---
 
+## 📡 Live State
+
+The unit publishes a message to Vestel's cloud whenever something changes (remote control,
+buttons, the app, Home Assistant). The integration listens to those messages, the same way the
+official app does, so the card follows the real state within seconds. This needs the
+`paho-mqtt` package, which Home Assistant installs for the integration automatically.
+
+The cloud's status document (polled every minute) stays as a fallback: it can be minutes
+behind and does not report an on/off change reliably. If the live connection cannot be
+opened, the integration logs one warning and keeps polling.
+
+---
+
 ## ⏰ Automatic Shutdown
 
 `ACOFFTV` stores the automatic shutdown time:
@@ -237,6 +255,8 @@ The APK exposes additional diagnostic fields. Availability depends on the air-co
 
 Some fields may not be returned by the device. Missing capabilities are therefore not considered an error.
 
+> ℹ️ In 2.0.0 the status comes from Vestel's newer status document plus the unit's live messages. The VOC, particle, filter-lifetime and UVC fields above are only filled where that document provides them; on models that publish them only as raw registers they stay empty. Reading those registers again is planned.
+
 ---
 
 ## 🧪 Raw API Services
@@ -245,15 +265,15 @@ For advanced testing and feature discovery, the integration provides raw API ser
 
 ### Dump current device status
 
-    vestel_ac.dump_raw_status
+    vestel_smart_life.dump_raw_status
 
 ### Send a raw command
 
-    vestel_ac.send_raw_code
+    vestel_smart_life.send_raw_code
 
 Example:
 
-    action: vestel_ac.send_raw_code
+    action: vestel_smart_life.send_raw_code
     data:
       code: "ACFANPO00562"
 
@@ -294,7 +314,7 @@ Sezer İltekin
 **Original project:**  
 https://github.com/iltekin/vestel-ac-remote-control
 
-The original API research provided the foundation for communicating with the Vestel cloud service. This integration extends that work with Home Assistant support and additional features discovered through APK analysis and real-device testing.
+Sezer İltekin's project was an early public exploration of the Vestel cloud. The API client in this integration is a separate, new implementation: it is written from the Vestel Smart Life app's own code (APK analysis) and from responses observed on a real account, and no code was taken from that project. See `docs/protocol.md` for the sources.
 
 ---
 
@@ -308,7 +328,7 @@ Some features are model and firmware dependent.
 
 If you encounter a problem, please open an issue:
 
-https://github.com/mutlutekir/Vestel_Klima_AirCon/issues
+https://github.com/mutlutekir/Vestel_Smart_Life/issues
 
 Do not include passwords, access tokens or refresh tokens in issue reports.
 
@@ -318,7 +338,10 @@ Do not include passwords, access tokens or refresh tokens in issue reports.
 
 # 🇹🇷 Türkçe
 
-Vestel AC, Wi-Fi destekli Vestel Doğa / Flora serisi klimaları Home Assistant üzerinden kontrol etmek için geliştirilmiş resmi olmayan bir özel entegrasyondur.
+Vestel Smart Life, Vestel Smart Life / Evin Aklı uygulamasındaki cihazları Home Assistant üzerinden kontrol etmek için geliştirilmiş resmi olmayan bir özel entegrasyondur. Şu an klimalar destekleniyor, diğer cihaz aileleri planlanıyor.
+
+> **1.0.x ("Vestel AC") sürümünden mi geliyorsun?** Entegrasyonun yeni bir alan adı var: `vestel_smart_life`. Eski *Vestel AC* girdisini sil, bu sürümü kur ve *Vestel Smart Life*'ı yeniden ekle. Entity kimlikleri değişir.
+
 
 Vestel Akıllı Yaşam bulut API'si ile doğrudan iletişim kurar ve Home Assistant'ta normalde bulunmayan gelişmiş klima kontrollerini sunar.
 
@@ -331,7 +354,6 @@ Vestel Akıllı Yaşam bulut API'si ile doğrudan iletişim kurar ve Home Assist
 - 🌀 Auto + 1-5 fan hızı
 - ↕️ Dikey kanatçık pozisyonu
 - 🔄 Dikey salınım / salınımı durdurma
-- ↔️ Desteklenen modellerde yatay kanatçık
 - ⚡ Turbo
 - 🌙 Uyku
 - 🍃 Tasarruf / Eco
@@ -349,7 +371,7 @@ Vestel Akıllı Yaşam bulut API'si ile doğrudan iletişim kurar ve Home Assist
 
 ### HACS — Önerilen
 
-<a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Klima_AirCon&category=integration">
+<a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=mutlutekir&repository=Vestel_Smart_Life&category=integration">
   <img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="HACS ile yükle">
 </a>
 
@@ -359,17 +381,17 @@ Alternatif olarak:
 2. Sağ üstten ⋮ → Custom repositories seçin.
 3. Aşağıdaki adresi ekleyin:
 
-    https://github.com/mutlutekir/Vestel_Klima_AirCon
+    https://github.com/mutlutekir/Vestel_Smart_Life
 
 4. Kategori olarak **Integration** seçin.
-5. **Vestel AC** entegrasyonunu yükleyin.
+5. **Vestel Smart Life** entegrasyonunu yükleyin.
 6. Home Assistant'ı yeniden başlatın.
 
 ### Manuel
 
 Son sürümü indirin ve:
 
-    custom_components/vestel_ac
+    custom_components/vestel_smart_life
 
 klasörünü:
 
@@ -389,7 +411,7 @@ Ardından Home Assistant'ı yeniden başlatın.
 
 Aratın:
 
-    Vestel AC
+    Vestel Smart Life
 
 Kimlik doğrulama için:
 
@@ -416,7 +438,7 @@ Kimlik doğrulama tamamlandıktan sonra kullanılabilir Vestel klimalar otomatik
 | Fan Auto / 1-5 | ✅ |
 | Dikey Kanatçık | ✅ |
 | Dikey Salınım | ✅ |
-| Yatay Kanatçık | ⚠️ Modele bağlı |
+| Yatay Kanatçık | ❌ Henüz yok (kodlama doğrulanmadı) |
 | Turbo | ✅ |
 | Uyku | ✅ |
 | Tasarruf | ✅ |
@@ -455,7 +477,7 @@ Mod ve fan hızı birlikte kodlanır:
 |---|---|
 | 0 | Turbo |
 | 1-3 | Dikey kanatçık |
-| 4-6 | Yatay kanatçık |
+| 4-6 | Yatay kanatçık (doğrulanmadı, salt okunur) |
 | 7 | Uyku |
 | 8 | İyonizer |
 | 9 | Tasarruf |
@@ -539,15 +561,15 @@ Bazı cihazlarda bu alanlar hiç bulunmayabilir. Bu durumda ilgili özelliklerin
 
 ### Cihazın ham durumunu görüntüleme
 
-    vestel_ac.dump_raw_status
+    vestel_smart_life.dump_raw_status
 
 ### Ham komut gönderme
 
-    vestel_ac.send_raw_code
+    vestel_smart_life.send_raw_code
 
 Örnek:
 
-    action: vestel_ac.send_raw_code
+    action: vestel_smart_life.send_raw_code
     data:
       code: "ACFANPO00562"
 
@@ -588,7 +610,7 @@ Sezer İltekin
 **Temel proje:**  
 https://github.com/iltekin/vestel-ac-remote-control
 
-Bu entegrasyon, ilk API araştırmalarını temel alarak Home Assistant desteği ve APK / gerçek cihaz analizleriyle keşfedilen ek özellikleri bir araya getirir.
+Sezer İltekin'in projesi Vestel bulutunun ilk herkese açık keşiflerinden biriydi. Bu entegrasyondaki API istemcisi ayrı ve yeni bir uygulamadır: Vestel Smart Life uygulamasının kendi kodundan (APK analizi) ve gerçek bir hesapta gözlenen yanıtlardan yazılmıştır, o projeden kod alınmamıştır. Kaynaklar için `docs/protocol.md` dosyasına bak.
 
 ---
 
@@ -602,7 +624,7 @@ Bazı özellikler klima modeli ve firmware sürümüne bağlıdır.
 
 Sorun yaşarsanız:
 
-https://github.com/mutlutekir/Vestel_Klima_AirCon/issues
+https://github.com/mutlutekir/Vestel_Smart_Life/issues
 
 üzerinden issue açabilirsiniz.
 
@@ -611,7 +633,7 @@ https://github.com/mutlutekir/Vestel_Klima_AirCon/issues
 ---
 
 <p align="center">
-  🌬️ <strong>Vestel AC + Home Assistant</strong>
+  🌬️ <strong>Vestel Smart Life + Home Assistant</strong>
   <br>
   <sub>Unofficial Community Integration</sub>
 </p>
