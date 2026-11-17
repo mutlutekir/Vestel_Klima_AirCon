@@ -1,1 +1,16 @@
-
+{
+  "domain": "vestel_smart_life",
+  "name": "Vestel Smart Life",
+  "codeowners": [
+    "@mutlutekir"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/mutlutekir/Vestel_Smart_Life",
+  "integration_type": "hub",
+  "iot_class": "cloud_push",
+  "issue_tracker": "https://github.com/mutlutekir/Vestel_Smart_Life/issues",
+  "requirements": [
+    "paho-mqtt>=2.0"
+  ],
+  "version": "2.0.0"
+}
